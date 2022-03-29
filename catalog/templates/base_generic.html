@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {%block title %}<title>Local Library</title>{% endblock%}
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'catalog/css/style.css' %}">
+    <script src="{%static 'catalog/js/scripts.js' %}"></script>
+    <!-- Bootstrap core JS-->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/js/bootstrap.bundle.min.js"></script>   
+</head>
+<body>
+    <div class="container-fluid">
+        <div class="d-flex" id="wrapper"> 
+                {% block sidebar %}
+            <div>
+                <!-- Sidebar --> 
+                <div class="border-end bg-white" id="sidebar-wrapper">
+                    <div class="sidebar-heading border-bottom bg-light">Local Library App<br>
+                        Current User: {{ user.get_username}}
+                    </div>
+                    <div class="list-group list-group-flush">
+                        <div></div>
+                        <a class="list-group-item list-group-item-action list-group-item-light p-3" href="{%url 'index' %}">Home
+                        <a class="list-group-item list-group-item-action list-group-item-light p-3" href="{%url 'books'%}">All books</a>
+                        <a class="list-group-item list-group-item-action list-group-item-light p-3" href="{% url 'author' %}">All authors</a>
+                        <a class="list-group-item list-group-item-action list-group-item-light p-3" href="{% url 'my-borrowed' %}">My Borrowed books</a>
+                        {% if perms.catalog.can_mark_returned %}                       
+                            <a class="list-group-item list-group-item-action list-group-item-light p-3" href="{% url 'all-borrowed' %}">See all borrowed books</a>
+                            <a class="list-group-item list-group-item-action list-group-item-light p-3" href="{% url 'author-create'%}">Add new Author</a>
+                            <a class="list-group-item list-group-item-action list-group-item-light p-3" href="{% url 'book-create' %}">Add new Book</a>
+                        {% endif %}
+                        <a class="list-group-item list-group-item-action list-group-item-light p-3" href="{% url 'image-upload' %}">Upload a pic</a>
+                        <a class="list-group-item list-group-item-action list-group-item-light p-3" href="{% url 'uploaded-images' %}">See all uploaded images</a>
+                        {% if user.is_authenticated %}
+                            <a class="list-group-item list-group-item-action list-group-item-light p-3" href="{%url 'account_logout' %}?next={{request.path}}">logout</a>
+                        {%else%}
+                            <a class="list-group-item list-group-item-action list-group-item-light p-3" href="{% url 'login'%}?next={{request.path}}">login</a>
+                        {% endif %}
+                    </div>
+                </div> 
+                {% endblock %}
+                </div>
+                <!-- Page content wrapper-->
+                <div id="page-content-wrapper">
+                    <!-- Top navigation-->
+                    <nav class="navbar navbar-expand-lg navbar-light bg-light border-bottom">
+                        <div class="container-fluid">
+                            <button class="btn btn-primary" id="sidebarToggle">Toggle Menu</button>
+                            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button>
+                            
+                            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                                <ul class="navbar-nav ms-auto mt-2 mt-lg-0">
+                                    <li class="nav-item active"><a class="nav-link" href="{% url 'index' %}">Home</a></li>                            
+                                    <li class="nav-item dropdown">
+                                        <a class="nav-link dropdown-toggle" id="navbarDropdown" href="#" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Add new</a>
+                                        <div class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
+                                            <a class="dropdown-item" href="{% url 'author-create'%}">Author</a>
+                                            <div class="dropdown-divider"></div>
+                                            <a class="dropdown-item" href="{% url 'book-create'%}">Books</a>                                     
+                                        </div>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </nav>
+                    <!-- Page content-->
+                    <div class="container-fluid">
+                        {% block content %}{% endblock %}   
+                    <!-- Page content-->  
+                    </div>  
+                    <div class="col-sm-10 ">
+                        {% block pagination %}
+                            {%if is_paginated %}
+                                <div class="pagination">
+                                    <span class="page-links">
+                                        {%if page_obj.has_previous %}
+                                            <a href="{{request.path}}?page={{page_obj.previous_page_number}}">previous</a>
+                                        {% endif %}
+                                        <span class="page-current">
+                                            Page{{page_obj.number}}of{{ page_obj.paginator.num_pages }}
+                                        </span>
+                                        {% if page_obj.has_next %}
+                                            <a href="{{ request.path }}?page={{ page_obj.next_page_number }}">next</a>
+                                        {% endif %}
+                                    </span>
+                                </div>      
+                            {% endif %}
+                        {% endblock %}
+                    </div>
+                </div> 
+                </div>     
+            </div> 
+        </div>
+    </div>
+</body>
+</html>
+
+
+

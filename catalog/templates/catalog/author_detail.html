@@ -1,0 +1,18 @@
+{%extends "base_generic.html" %}
+
+{%block content %}
+    <h1>Author: {{author.first_name}},{{author.last_name}}</h1>
+    <p>{{author.date_of_birth}}</p>
+    {% if perms.catalog.can_mark_returned %}
+        <button type="submit"><a href="{{author.id}}/update">Update</a></button>
+        <button type="submit"><a href="{{author.id}}/delete" style="color: red;">Delete</a></button>
+    {% endif %}
+    <div style="margin-left:20px;margin-top:20px">
+        <h4>Books</h4>
+        {% for books in author.book_set.all %}
+        <hr>
+        <p><a href="{{ books.get_absolute_url }}">{{ books.title }}</a></p>
+        <p>{{books.summary}}</p>
+        {% endfor %}
+    </div>
+{% endblock %}
